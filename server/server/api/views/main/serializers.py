@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ...models import Wedding, Guest, Checklist, BudgetItem, Vendor, WeddingVendor
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 from django.utils import timezone
 
@@ -66,3 +67,18 @@ class WeddingVendorSerializer(serializers.ModelSerializer):
         if attrs['payment_status'] not in ['paid', 'pending', 'cancelled']:
             raise serializers.ValidationError("Payment status must be either 'paid', 'pending', or 'cancelled'.")
         return attrs
+
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'email')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            email=validated_data['email']
+        )
+        return user
+

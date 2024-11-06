@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #pip apps
+    'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     #apps
     'api',
     'corsheaders',
@@ -47,7 +49,11 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+<<<<<<< HEAD
     "corsheaders.middleware.CorsMiddleware",
+=======
+    'corsheaders.middleware.CorsMiddleware',
+>>>>>>> 760d7db53ce0806e5cee4aea5e46f29514eb9e01
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,7 +134,29 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
 CORS_ALLOWED_ORIGINS = [
     
     'http://localhost:5173'
+=======
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:5173',  # The default port for create-react-app
+>>>>>>> 760d7db53ce0806e5cee4aea5e46f29514eb9e01
 ]
