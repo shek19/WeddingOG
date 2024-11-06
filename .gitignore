@@ -1,2 +1,4 @@
 venv
 sample.py
+
+db.sqlite3
