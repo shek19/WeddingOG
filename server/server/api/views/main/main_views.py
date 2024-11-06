@@ -1,9 +1,11 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework import generics,status
 from rest_framework.exceptions import NotFound
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
 
-from .serializers import WeddingSerializer,GuestSerializer,ChecklistSerializer,BudgetItemSerializer,VendorSerializer,WeddingVendorSerializer
+from .serializers import WeddingSerializer,GuestSerializer,ChecklistSerializer,BudgetItemSerializer,VendorSerializer,WeddingVendorSerializer,RegisterSerializer
 from ...models import Wedding,Guest,Checklist,BudgetItem,Vendor,WeddingVendor
 
 
@@ -117,3 +119,24 @@ class ChecklistUpdateView(generics.UpdateAPIView):
             return obj
         except Checklist.DoesNotExist:
             raise NotFound("Checklist not found or does not belong to your weddings.")
+
+
+class RegisterView(generics.CreateAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        
+        user = serializer.instance
+        refresh = RefreshToken.for_user(user)
+        tokens = {'refresh': str(refresh), 'access': str(refresh.access_token)}
+
+        return Response(
+            {'msg': 'User created successfully', 'tokens': tokens},
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
